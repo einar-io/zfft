@@ -1,6 +1,57 @@
-# zama-challenge
+# ZFFT
 
-Zama CUDA Challenge 2024
+### Current state
+
+This project is under active development.
+
+
+### Build and run
+
+
+**Step 1** First install the necessary OS packages:
+
+Arch
+
+    sudo pacman -S conan cuda cmake
+
+Debian/Ubuntu
+
+   sudo apt install conan cuda cmake
+
+**Step 2** Install the dependencies:
+
+Clone the project
+
+    git clone 'https://www.github.com/einar-io/zfft'
+    cd zfft
+
+Install the dependencies:
+
+    conan install . --build missing
+
+Now go to the build folder:
+
+    cd build/
+
+Generate CMake configuration of the parent directory inside `build/`:
+
+    cmake .. 
+
+This ends the one-time setup. 
+
+**Step 3** Install the dependencies:
+
+Next build the project in `build/`:
+
+    cmake --build .
+
+and run the test suite:
+
+    bin/run_zfft_test
+
+For a compined rebuild-run-loop, use the line:
+
+    cmake --build . && bin/run_zffttest
 
 
 ### Considerations
@@ -23,47 +74,88 @@ C can be represented as:
     |P(X)| == N
 
 
+###### Tuesday
+
+Benchmarks (throughput) makes sense mostly for many polynomials, so we can wait
+until we are doing matrices anyway.
+
+The most important achievement is to get a correct implementation of iterative FFT.
+
+It is unclear how much spacial and temporal optimization techniques for matrix
+multiplication such as block and register tiling can be applied in this project,
+since the element type (N-degree polynomials) do not in genereal fit in
+registers.  This is area will not be prioritized.
+
+###### Wednesday
+
+It is clear that we will leave optimizations behind, but we can document them as
+we encounter them for later implementation.  The FFT implementation chosen, is
+single threaded.  As long as we have enough polynomials, this should not be a
+problem.
+
+In the matrix multiplication, each polynomial will be multiplied several times.
+Thus, it makes sense to first convert each element (polynomial) into point-value
+form and then do the matrix multiplication algorithm and then convert back to
+coefficient form.
+
+
+
+
 ### Feature Priorities
 
 - [ ] Use Async API
 - [ ] End-to-End Tests
-- [ ] Benchmark Tests
-- [ ] Wrapping solution in 2nd language:  C++(?), Rust, Zig, Go, Python
-
-### 
-
+- [ ] Benchmarks
+- [ ] Visualization
+- [ ] (low priority) Wrapping solution in 2nd language:  C++(?), Rust, Zig, Go, Python
 
 
 ### Task
 
 - [x] 1h Sketch a plan
-- [ ] 4h Read up on polynomail rings in Lauritzen
-- [ ] Implement `Add`
+- [x] 4h Read up on polynomail rings in Lauritzen
+- [x] Implement `Add`
+- [x] Implement iterative FFT
+- [x] Write test
+- [ ] potentially compare with cuFFT
+- [x] Implement Matrix add
+- [ ] Benchmark.  Consider using events and timers.
+- [ ] Implement Matrix mul
+- [ ] Benchmark
+- [ ] Report
 
 
 ### Schedule
 
 - Monday: Plan, Study Poly Rings, implement Add e2e, Makefile/conan, Test, simple Benchmark
-- Tuesday: Design meaningful benchmark, Read PMPH matmul, implement Mul/FFT
-- Wednesday: Matmul
-- Thursday: 
-- Friday:
-- Saturday: Free
+- Tuesday: Design meaningful benchmark, Read PMPH matmul,
+- Wednesday:  implement Mul/FFT
+- Thursday:  MatAdd, MatMul
+- Friday: MatMul, benchmark
+- Saturday: Visualisation, write-up
 - Sunday:   Free
 
 
-### Requirements
 
-- Only tested Linux platform with Conan
+### Versions used under development
 
-    sudo pacman -S conan cuda
+Only tested Linux platform with Conan2
 
-Debian/Ubuntu
+```bash
+$ conan --version
+Conan version 2.1.0
 
-   sudo apt install conan 
+$ cmake --version
+cmake version 3.28.3
 
-Then the project is can be started with
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
 
-    git clone <URL>
-    conan install . --build missing
+$ nvcc --version
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2024 NVIDIA Corporation
+Built on Tue_Feb_27_16:19:38_PST_2024
+Cuda compilation tools, release 12.4, V12.4.99
+Build cuda_12.4.r12.4/compiler.33961263_0
+```
+
 

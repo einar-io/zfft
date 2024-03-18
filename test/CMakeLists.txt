@@ -1,7 +1,3 @@
-#cmake_minimum_required(VERSION 3.20)
-
-#enable_testing()
-
 find_package(GTest REQUIRED)
 
 add_executable(${PROJECT_NAME}test)
@@ -21,7 +17,7 @@ target_compile_features(${PROJECT_NAME}test PRIVATE cxx_std_20)
 
 
 
-target_link_libraries(${PROJECT_NAME}test zama)
+target_link_libraries(${PROJECT_NAME}test zfft)
 
 target_link_libraries(${PROJECT_NAME}test GTest::gtest_main)
 
