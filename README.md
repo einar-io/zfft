@@ -5,8 +5,9 @@
 This project is under active development.
 
 
-### Build and run
+### Instructions
 
+To build and run the project, do the following three steps:
 
 **Step 1** First install the necessary OS packages:
 
@@ -16,25 +17,22 @@ Arch
 
 Debian/Ubuntu
 
-   sudo apt install conan cuda cmake
+    sudo apt install conan cuda cmake
 
 **Step 2** Install the dependencies:
 
 Clone the project
 
-    git clone 'https://www.github.com/einar-io/zfft'
+    git clone 'https://github.com/einar-io/zfft'
     cd zfft
 
 Install the dependencies:
 
     conan install . --build missing
 
-Now go to the build folder:
+Generate CMake configuration of the parent directory while still in `build/`:
 
     cd build/
-
-Generate CMake configuration of the parent directory inside `build/`:
-
     cmake .. 
 
 This ends the one-time setup. 
@@ -47,7 +45,7 @@ Next build the project in `build/`:
 
 and run the test suite:
 
-    bin/run_zfft_test
+    bin/run_zffttest
 
 For a compined rebuild-run-loop, use the line:
 
