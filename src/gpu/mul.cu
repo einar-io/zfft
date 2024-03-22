@@ -184,15 +184,15 @@ namespace gpu
         dim3 blockdim = dim3(32, 1);
         dim3 griddim = dim3(CEIL_DIV(32, blockdim.x), 1);
 
-        gpu::fft<<<griddim, blockdim, 0, stream1>>>(n, log_n, (cuComplex *)d_p);
+        gpu::fft2<<<griddim, blockdim, 0, stream1>>>(n, log_n, (cuComplex *)d_p);
         checkCudaErrors(cudaPeekAtLastError());
-        gpu::fft<<<griddim, blockdim, 0, stream1>>>(n, log_n, (cuComplex *)d_q);
+        gpu::fft2<<<griddim, blockdim, 0, stream1>>>(n, log_n, (cuComplex *)d_q);
         checkCudaErrors(cudaPeekAtLastError());
         // sync
         gpu::pvMul<<<griddim, blockdim, 0, stream1>>>(n, d_s, d_p, d_q);
         checkCudaErrors(cudaPeekAtLastError());
         // ifft
-        gpu::fft<<<griddim, blockdim, 0, stream1>>>(n, log_n, (cuComplex *)d_s, true);
+        gpu::fft2<<<griddim, blockdim, 0, stream1>>>(n, log_n, (cuComplex *)d_s, true);
         checkCudaErrors(cudaPeekAtLastError());
 
         // Phase 4: Memcpy: Device-to-Host

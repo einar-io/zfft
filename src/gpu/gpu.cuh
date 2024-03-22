@@ -78,6 +78,45 @@ namespace gpu
         }
     }
 
+    __global__ static void fft2(int n, int log_n, cuComplex *a, bool invert = false)
+    {
+        int i = blockIdx.x * blockDim.x + threadIdx.x;
+        if (n <= i)
+            return;
+
+        permute(n, log_n, a);
+
+        // partitions from pairs up to full size
+        // side-effects are contained within a partition
+        for (int len = 2; len <= n; len <<= 1)
+        {
+            // j is the offset in each part (of length len)
+            const int j = i % len;
+            // first half of the partition
+            const int half = len >> 1;
+
+            // was: float ang = (invert ? -1 : 1) * 2 * PI * j / len;
+            float ang = (invert ? -1 : 1) * PI * j / half;
+            cuComplex w = make_cuComplex(cos(ang), sin(ang));
+
+            if (j < half)
+            {
+                cuComplex u = a[i];
+                cuComplex v = cuCmulf(a[i + half], w);
+                __syncthreads();
+                a[i] = cuCaddf(u, v);
+                a[i + half] = cuCsubf(u, v);
+            }
+            __syncthreads();
+        }
+
+        if (invert)
+        {
+            cuComplex nC = make_cuComplex(float(n), 0.0f);
+            a[i] = cuCdivf(a[i], nC);
+        }
+    }
+
     __global__ static void fft(int n, int log_n, cuComplex *a, bool invert = false)
     {
         int i = blockIdx.x * blockDim.x + threadIdx.x;

@@ -52,6 +52,13 @@ For a compined rebuild-run-loop, use the line:
     cmake --build . && bin/run_zffttest
 
 
+**Clean**
+
+You can clean the build directory by using git:
+
+    git clean -Xid
+
+
 ### Considerations
 
 The challenge is extensive, so I will prioritize finishing one function at a

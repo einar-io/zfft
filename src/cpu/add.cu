@@ -19,7 +19,7 @@ namespace cpu
     }
 
     // This is simle
-    vector<cuComplex> add_simple(vector<cuComplex> &p, vector<cuComplex> &q)
+    vector<cuComplex> add_simple(const vector<cuComplex> &p, const vector<cuComplex> &q)
     {
         ASSERT_MSG(p.size() == q.size(), "The two vectors must have same length.");
         vector<cuComplex> s;
